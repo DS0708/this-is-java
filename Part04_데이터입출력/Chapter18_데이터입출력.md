@@ -135,7 +135,7 @@ public class Main {
 ```java
 import java.io.*;
 
-public class P001 {
+public class Main {
     public static void main(String[] args) throws IOException {
         String originalFileName = "./test.txt";
         String targetFileName = "./test1.txt";
@@ -162,4 +162,168 @@ public class P001 {
 ```
 
 ## 18.4 문자 입출력 스트림
+- 입출력되는 단위가 문자인 것을 제외하고는 바이트 입출력 스트림과 사용 방법은 동일하다.
 
+### 문자 출력
+- Writer <- (FileWriter, BufferedWriter, PrintWriter, OutputStreamWriter)
+```java
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Writer writer = new FileWriter("./test.txt");
+        
+        //1 문자씩 출력
+        char a = 'A';
+        writer.write(a);
+        
+        //char 배열 출력
+        char[] arr = {'A','B','C'};
+        writer.write(arr);
+        
+        //문자열 출력 제공
+        writer.write("DEF");
+
+        writer.flush();
+        writer.close();
+    }
+}
+```
+
+### 문자 읽기
+- Reader <- (FileReader, BufferedReader, InputStreamReader)
+```java
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        Reader reader = null;
+
+        //1 문자씩 읽기
+        reader = new FileReader("./test.txt");
+        while(true){
+            int data = reader.read();
+            if(data==-1) break;
+            System.out.print((char) data);
+        }
+
+        reader.close();
+        System.out.println();
+
+        //문자 배열로 읽기
+        reader = new FileReader("./test.txt");
+        char[] data = new char[100];
+        while (true){
+            int num = reader.read(data);
+            if(num==-1) break;
+            for(int i=0; i<num; i++){
+                System.out.print(data[i]);
+            }
+        }
+
+        reader.close();
+    }
+}
+```
+
+## 18.5 보조 스트림
+- 보조 스트림 : 다른 스트림과 연결되어 여러가지 편리한 기능을 제공해주는 스트림
+- 자체적으로 입출력을 수행할 수 없기 떄문에 입출력 소스로부터 직접 생성된 입출력 스트림에 연결해서 사용해야함
+  - 입력 스트림 -> 보조 스트림 1 -> 보조 스트림 2 -> 프로그램 -> 보조 스트림 2 -> 보조 스트림 1 -> 출력 스트림
+  - 예를 들어 바이트 입력 스트림인 FileinputStream에 InputStreamReader 보조 스트림을 연결하는 코드
+  ```java
+  InputStream is = new FileinputStream("...");
+  InputStreamReader reader = new InputStreamReader(is);
+  ```
+- 보조 스트림은 또 다른 보조 스트림과 연결되어 스트림 체인으로 구성 가능
+   ```java
+  InputStream is = new FileinputStream("...");
+  InputStreamReader reader = new InputStreamReader(is);
+  BufferedReader br = new BufferedReader(reader);
+  ```
+- 자주 사용되는 보조 스트림
+  - `InputStreamReader` : 바이트 스트림을 문자 스트림으로 변환
+  - `BufferedInputStream, BufferedOutputStream, BufferedReader, BufferedWriter` : 입출력 성능 향상
+  - `DataInputStream, DataOutputStream` : 기본 타입 데이터 입출력
+  - `PrintStream, PrintWriter` : 줄바꿈 처리 및 형식화된 문자열 출력
+  - `ObjectInputStream, ObjectOutputStream` : 객체 입출력
+
+## 18.6 문자 변환 스트림
+
+### InputStream을 Reader로 변환 
+  - 바이트 스트림에 보조 스트림을 연결하여 문자 스트림으로 변환
+  ```Java
+  InputStream is = new FileInputStream("FileName");
+  Reader reader = new InputStreamReader(is);
+  ```
+- FileReader의 원리
+  - FileReader는 InputStreamReader의 자식 클래스로써 내부적으로 FileInputStream에 InputStreamReader(보조스트림)을 연결한 것이라고 볼 수 있음.
+
+### OutputStream을 Writer로 변환
+```java
+OutputStream os = new FileOutputStream("FileName");
+Writer writer = new OutputStreamWriter(os);
+```
+> Writer writer = new FileWriter("FileName")와 같다.
+
+### 예제 : UTF-8 문자셋으로 파일에 문자를 저장하고, 저장된 문자를 다시 읽기
+```java
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        write("문자 변환 스트림을 사용합니다.");
+        String data = read();
+        System.out.println(data);
+    }
+
+    public static void write(String str) throws IOException{
+        OutputStream os = new FileOutputStream("./test.txt");
+        Writer writer = new OutputStreamWriter(os, "UTF-8");
+
+        writer.write(str);
+        writer.flush();
+        writer.close();
+    }
+
+    public static String read() throws IOException{
+        InputStream is = new FileInputStream("./test.txt");
+        Reader reader = new InputStreamReader(is, "UTF-8");
+
+        char[] data = new char[100];
+        int num = reader.read(data);
+        reader.close();
+        String str = new String(data,0,num);
+        return str;
+    }
+}
+```
+
+## 18.7 성능 향상 스트림
+- 입력 소스 와 프로그램 사이에 메모리 버퍼를 두어 하드 디스크로부터 직접읽는 것을 방지하여 IO 속도를 향상 시킨다.
+- 바이트 스트림
+  ```java
+  BufferedInputStream bis = new BufferedInputStream(바이트 입력 스트림);
+  BufferedOutputStream bos = new BufferedOutputStream(바이트 출력 스트림);
+  ```
+- 문자열 스트림
+  ```java
+  BufferedReader br = new BufferedReader(문자 입력 스트림);
+  BufferedWriter bw = new BufferedWriter(문자 출력 스트림);
+  ```
+- 문자 입력 스트림에 BufferedReader를 연결하면 성능 향상분 아니라 행 단위로 문자열을 읽는 `readLine()`을 제공
+  ```java
+  import java.io.*;
+
+  public class Main {
+     public static void main(String[] args) throws IOException {
+          BufferedReader br = new BufferedReader(new FileReader("./test.txt"));
+          while(true){
+              String str = br.readLine();
+              if (str == null) break;
+              System.out.println(str);
+         }
+     }
+
+  }
+  ```
