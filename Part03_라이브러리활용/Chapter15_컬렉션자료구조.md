@@ -65,6 +65,62 @@ List<E> list = new ArrayList<E>(); //E에 지정된 타입의 객체만 저장
 List<E> list = new ArrayList<>(); //E에 지정된 타입의 객체만 저장
 List list = new ArrayList();      // 모든 타입의 객체를 저장
 ```
+- 특정 인덱스의 객체를 제거하면 바로 뒤 인덱스부터 마지막 인덱스까지 모두 앞으로 1씩 당겨지므로 `삭제와 삽입이 빈번히 일어나는 곳에 사용 하는 것은 바람직하지 않다.`
+- for문 활용 예시
+```java
+List<Integer> list = new ArrayList<>();
+for (int i : list) System.out.println(i);
+```
 
+### Vector
+- ArrayList와 동일한 내부 구조
+- 차이점은 Vector은 Synchronized 메소드로 구성되어 있기 때문에 `멀티 스레드가 동시에 Vector() 메소드를 실행할 수 없음.`
+- 따라서 `멀티 스레드 환경에서는 안전하게 객체를 추가 또는 삭제할 수 있음`
+- 선언방법
+```java
+List<E> list = new Vector<E>();  //E에 지정된 타입의 객체만 저장
+List<E> list = new Vector<>();  //E에 지정된 타입의 객체만 저장
+List list = new Vector(); //모든 타입의 객체 저장
+```
+- 멀티 스레드 환경 사용 예시
+```java
+List<Integer> list = new Vector<>();
+
+Thread th1 = new Thread() {
+  @Override
+  public void run(){
+    for (int i=0; i<1000; i++) list.add(i);
+  }
+};
+
+Thread th2 = new Thread() {
+  @Override
+  public void run(){
+    for (int i=0; i<1000; i++) list.add(i);
+  }
+};
+
+th1.start();
+th2.start();
+
+try {
+  th1.join();
+  th2.join();
+} catch (Exception e) {}
+
+System.out.println(list.size()); //2000
+```
+> 실행 결과가 정확히 200임, ArrayList를 사용할 경우 2000이 나오지 않는다.
+
+### LinkedList
+- ArrayList와 사용방법은 동일하나 내부 구조가 완전히 다름
+- LinkedList는 인접 객체를 체인처럼 연결해서 관리
+- 특정 위치에서 객체를 삽입하거나 삭제하면 바로 앞뒤 링크만 변경하면 되므로 `빈번한 객체 삭제와 삽입이 일어나는 곳에 유리`
+- 생성방법
+```java
+List<E> list = new LinkedList<E>(); //E에 지정된 타입의 객체만 저장
+List<E> list = new LinkedList<>(); //E에 지정된 타입의 객체만 저장
+List list = new LinkedList();      // 모든 타입의 객체를 저장
+```
 
 
