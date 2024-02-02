@@ -52,7 +52,7 @@
     - E remove(int index) : 주어진 index에 저장된 객체를 삭제
     - boolean remove(Object o) : 주어진 객체를 삭제
 
-### ArrayList
+### `ArrayList`
 - 일반적으로 List 컬렉션에서 가장 많이 사용된다.
 - 객체를 추가하면 내부 배열에 객체가 저장된다.
 - 일반 배열과의 차이점은 ArrayList는 제한 없이 객체 추가 가능
@@ -72,7 +72,7 @@ List<Integer> list = new ArrayList<>();
 for (int i : list) System.out.println(i);
 ```
 
-### Vector
+### `Vector`
 - ArrayList와 동일한 내부 구조
 - 차이점은 Vector은 Synchronized 메소드로 구성되어 있기 때문에 `멀티 스레드가 동시에 Vector() 메소드를 실행할 수 없음.`
 - 따라서 `멀티 스레드 환경에서는 안전하게 객체를 추가 또는 삭제할 수 있음`
@@ -112,7 +112,7 @@ System.out.println(list.size()); //2000
 ```
 > 실행 결과가 정확히 200임, ArrayList를 사용할 경우 2000이 나오지 않는다.
 
-### LinkedList
+### `LinkedList`
 - ArrayList와 사용방법은 동일하나 내부 구조가 완전히 다름
 - LinkedList는 인접 객체를 체인처럼 연결해서 관리
 - 특정 위치에서 객체를 삽입하거나 삭제하면 바로 앞뒤 링크만 변경하면 되므로 `빈번한 객체 삭제와 삽입이 일어나는 곳에 유리`
@@ -140,7 +140,7 @@ List list = new LinkedList();      // 모든 타입의 객체를 저장
     - void clear() : 저장된 모든 객체 삭제
     - boolean remove(Object o) : 주어진 객체 삭제
 
-### HashSet
+### `HashSet`
 - Set 컬렉션 중 가장 많이 사용됨
 - 생성 방법
 ```java
@@ -226,6 +226,136 @@ Set set = new HashSet();  //모든 타입의 객체를 저장
   > hasNext()로 가져올 객체가 있는지 확인하고 next()를 통해 객체를 가져온다.
 
 ## 15.4 Map 컬렉션
+- Key와 Value로 구성된 Entry 객체를 저장한다.
+- 여기서 Key와 Value 모두 Object임
+- Key는 중복저장 불가능, Value는 가능
+- 기존에 저장된 Key와 동일한 Key로 값을 저장할 경우 새로운 Key의 Value로 대체된다.
+- HashMap, Hashtable, LinkedHashMap, Properties, TreeMap 등이 있다.
+- Map 인터페이스 Method (키로 객체들을 관리하기 때문에 키를 매개값으로 갖는 메소드가 많다.)
+  - 객체 추가
+    - V put(K key, V value) : 주어진 key와 value를 추가하고 value를 리턴
+  - 객체 검색
+    - boolean containsKey(Object key) : 주어진 key가 있는지 여부
+    - boolean containsValue(Object value) : 주어진 value가 있는지 여부
+    - Set<Map.Entry<K,V>> entrySet() : 키와 값의 쌍으로 구성된 모든 Map.Entry 객체를 Set에 담아서 리턴
+    - V get(Object key) : 주어진 key의 value를 리턴
+    - boolean isEmpty()
+    - Set<K> keySet() : 모든 key를 Set에 담아서 리턴
+    - int size() : 저장된 키의 총 수를 리턴
+    - Collection<V> values() : 저장된 모든 value를 Collection에 담아서 리턴
+  - 객체 삭제
+    - void clear() : 모든 Map.Entry(키와 값)을 삭제
+    - V remove(Object key) : 주어진 key와 일치하는 Map.Entry를 삭제하고 그 value를 리턴
 
 
+### `HashMap`
+- HashMap은 키로 사용할 객체가 hashCode() 메소드의 리턴값이 같고 equals() 메소드가 true를 리턴할 경우, 동일 키로 보고 중복 저장을 허용하지 않음.
+- 생성 방법
+```java
+Map<K,V> map = new HashMap<K,V>();
+```
+```java
+Map<String,Integer> map = new HashMap<String,Integer>();
+Map<String,Integer> map = new HashMap<>();
+Map map = new HashMap();  //거의 없음
+```
+- Code Example
+```java
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+public class HashMapExample {
+    public static void main(String[] args) {
+        Map<String, Integer> map = new HashMap<>();
+
+        map.put("ds",90);
+        map.put("sh",95);
+        map.put("ds",100);  //동일한 key
+
+        System.out.println(map.size());     //2
+
+        //키로 값 얻기
+        String key = "ds";
+        int value = map.get(key);
+        System.out.println(value);  //100
+
+        //키 Set 컬렉션을 얻고, 반복해서 키와 값을 얻기
+        Set<String> keySet = map.keySet();
+        Iterator<String> keyIterator = keySet.iterator();
+        while(keyIterator.hasNext()){
+            String k = keyIterator.next();
+            Integer v = map.get(k);
+            System.out.println("set Collection : "+k+" : "+v);
+        }
+
+        //엔트리 Set 컬렉션을 얻고, 반복해서 키와 값을 얻기
+        Set<Map.Entry<String,Integer>> entrySet = map.entrySet();
+        Iterator<Map.Entry<String,Integer>> entryIterator = entrySet.iterator();
+        while(entryIterator.hasNext()){
+            Map.Entry<String,Integer> entry = entryIterator.next();
+            String k = entry.getKey();
+            int v = entry.getValue();
+            System.out.println("엔트리 set :" + k+" : "+v);
+        }
+
+        //키로 엔트리 삭제
+        map.remove("sh");
+        System.out.println(map.size()); // 1
+    }
+}
+```
+
+### `Hashtable`
+- HashMap과 동일한 내부 구조
+- 차이점은 Hashtable은 `synchronized 메소드로 구성`
+- 따라서 멀티 스레드 환경에서 안전하게 객체를 추가 삭제할 수 있음.
+- 선언방법
+```java
+Map<String,Integer> map = new Hashtable<String,Integer>();
+Map<String,Integer> map = new Hashtable<>();
+```
+
+### `Properties`
+- Properties는 `Hashtable의 자식 클래스`이기 때문에 Hashtable의 특징을 그대로 가지고 있다.
+- Properties는 Key와 Value를 `String 타입으로만 제한한 컬렉션`
+- 주로 확장자가 .properties인 프로퍼티 파일을 읽을 때 사용
+- Code Example
+  - database.properties
+  ```properties
+  driver=oracle.jdbc.OracleDirver
+  url=jdbc:oracle:thin:@localhost:1521:orcl
+  username=scott
+  password=tiger
+  admin=\uD64D\uAe38\uB3D9
+  ```
+  - PropertiesExample
+  ```java
+  import java.io.IOException;
+  import java.util.Properties;
+
+  public class PropertiesExample {
+      public static void main(String[] args) throws IOException {
+          Properties properties = new Properties();
+
+          //PropertiesExample.class와 동일한 ClassPath에 있는 database.properties 파일 로드
+          properties.load(PropertiesExample.class.getResourceAsStream("database.properties"));
+
+          //주어진 키에 대한 값 읽기
+          String driver = properties.getProperty("driver");
+          String url = properties.getProperty("url");
+          String username = properties.getProperty("username");
+          String password = properties.getProperty("password");
+          String admin = properties.getProperty("admin");
+
+          //값 출력
+          System.out.println("driver : "+ driver);
+          System.out.println("url : "+ url);
+          System.out.println("username : "+ username);
+          System.out.println("password : "+ password);
+          System.out.println("admin : "+ admin);
+      }
+  }
+  ```
 
