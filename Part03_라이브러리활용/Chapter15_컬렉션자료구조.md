@@ -123,4 +123,109 @@ List<E> list = new LinkedList<>(); //E에 지정된 타입의 객체만 저장
 List list = new LinkedList();      // 모든 타입의 객체를 저장
 ```
 
+## 15.3 Set 컬렉션
+- List 컬렉션은 저장 순서를 유지하지만, `Set 컬렉션은 저장 순서가 유지되지 않는다.`
+- 객체 중복 저장 불가능, 하나의 null만 저장 가능
+- 수학의 집합과 같은 구조
+- HashSet, LinkedHashSet, TreeSet 등이 존재
+- Set 인터페이스의 메소드
+  - 객체 추가
+    - boolean add(E e) : 저장을 성공하면 true, 실패하면 false를 return
+  - 객체 검색
+    - boolean contains(Object o) : 객체가 저장되어 있는지 여부
+    - isEmpty()
+    - `Iterator<E> iterator() : 저장된 객체를 한 번씩 가져오는 반복자 리턴`
+    - int size() : 저장되어 있는 전체 객체 수 리턴
+  - 객체 삭제
+    - void clear() : 저장된 모든 객체 삭제
+    - boolean remove(Object o) : 주어진 객체 삭제
+
+### HashSet
+- Set 컬렉션 중 가장 많이 사용됨
+- 생성 방법
+```java
+Set<E> set = new HashSet<E>();
+Set<E> set = new HashSet<>();
+Set set = new HashSet();  //모든 타입의 객체를 저장
+```
+- HashSet은 동일한 객체는 중복 저장하지 않는다.
+  - 여기서 동일한 객체란 동등 객체를 의미
+  - 다른 객체이더라도 hashCode() 메소드의 리턴값이 같고
+  - equals() 메소드가 true를 리턴하면 동일한 객체라고 판단하고 중복저장하지 않는다.
+- Code Example
+  1. `HashSet사용`
+  ```java
+  Set<String> set = new HashSet<>();
+
+  set.add("JAVA");
+  set.add("JDBC");
+  set.add("JAVA"); //중복 객체
+
+  System.out.println(set.size()); // 2
+  ```
+  2. `class에 hashCode() 와 equals()를 Override하여 사용하기`
+  ```java
+  import java.util.HashSet;
+  import java.util.Set;
+
+  public class set {
+      public static void main(String[] args) {
+          Set<Member> set = new HashSet<>();
+
+          set.add(new Member("ds",25));
+          set.add(new Member("ds",25));
+
+          System.out.println("총 객체 수 : " + set.size()); // 총 객체수 : 1
+      }
+  }
+
+  class Member{
+      String name;
+      int age;
+
+      public Member(String name, int age){
+          this.name = name;
+          this.age = age;
+      }
+
+      //hashCode 재정의
+      @Override
+      public int hashCode(){
+          return name.hashCode() + age;
+      }
+      
+      //equals 재정의
+      @Override
+      public boolean equals(Object obj){
+          if(obj instanceof Member target){
+              return target.name.equals(this.name) && (target.age==this.age);
+          }else{
+              return false;
+          }
+      }
+  }
+  ```
+  > hashCode 값이 같고 equals가 true를 리턴하면 동일한 객체로 판별한다.(둘 중 하나라도 틀리면 다른 객체임)
+  3. `Set에 있는 객체 불러오기`
+  ```java
+  //for 문 사용하기
+  Set<E> set = new HashSet<>();
+  for(E e : set){
+    ...
+  }
+  ```
+  ```java
+  //ierator 사용하기
+  Set<E> set = new HashSet<>();
+  Iterator<E> iterator = set.iterator();
+
+  while(iterator.hasNext()){
+    E e = iterator.next();
+  }
+  ```
+  > hasNext()로 가져올 객체가 있는지 확인하고 next()를 통해 객체를 가져온다.
+
+## 15.4 Map 컬렉션
+
+
 
