@@ -358,4 +358,238 @@ Map<String,Integer> map = new Hashtable<>();
       }
   }
   ```
+ 
+## 15.5 검색 기능을 강화시킨 컬렉션 `(TreeSet, TreeMap)` 
+- 컬렉션 프레임 워크는 검색 기능을 강화시킨 TreeSet과 TreeMap 제공
+- TreeSet은 Set 컬렉션이고 TreeMap은 Map컬렉션이다.
+
+### TreeSet
+- Binary tree (이진 트리)를 기반으로 한 Set Collection
+- 이진 트리는 여러개의 노드가 트리형태로 연결된 구조로, 루트 노드라고 불리는 하나의 노드에서 시작해 각 노드에 최대 2개의 노드를 연결할 수 있는 구조
+- TreeSet에 객체를 저장하면 부모노드의 객체와 비교해 낮은 것은 왼쪽, 높은 것은 오른쪽 자식 노드에 자동으로 배치
+- 생성 방법
+  ```java
+  TreeSet<E> treeSet = new TreeSet<E>();
+  TreeSet<E> treeSeet = new TreeSeet<>();
+  ```
+  > Set 타입 변수에 대입해도 되지만 TreeSet 타입으로 대입한 이유는 검색 관련 메소드가 TreeSet에만 정의되어 있기 때문이다.
+- 관련 메소드
+  - E first() : 제일 낮은 객체 리턴
+  - E last() : 제일 높은 객체 리턴
+  - E lower(E e) : 주어진 객체보다 바로 아래 객체 리턴
+  - E higher(E e) : 주어진 객체보다 바로 위 객체 리턴
+  - E floor(E e) : 주어진 객체와 동등한 객체가 있다면 리턴, 없다면 바로 아래 객체 리턴
+  - E ceiling(E e) : 주어진 객체와 동등한 객체가 있다면 리턴, 없다면 바로 위 객체 리턴
+  - E pollFirst() : 제일 낮은 객체를 리턴하고 컬렉션에서 제거
+  - E pollLast() : 제일 높은 객체를 리턴하고 컬렉션에서 제거
+  - Iterator<E> descendingIterator() : 내림차순으로 정렬된 Iterator를 리턴
+  - NavigableSet<E> descendingSet() : 내림차순으로 정렬된 NavigableSet을 리턴
+  - NavigableSet<E> headSet(E e, boolean i) : e보다 낮은 객체를 리턴, i가 true이면 e를 포함하여 리턴
+  - NavigableSet<E> tailSet(E e, boolean i) : e보다 높은 객체를 리턴, i가 true이면 e를 포함하여 리턴
+  - NavigableSet<E> subSet(E a, boolean i1, E b, boolean i2) : a보다 크고 b보다 작은 NavigableSet리턴, i1와 i2에 따라 포함 여부 결정
+- Code Example
+  ```java
+  import java.util.Iterator;
+  import java.util.NavigableSet;
+  import java.util.TreeSet;
+
+  public class TreeSetExample {
+      public static void main(String[] args) {
+          TreeSet<Integer> treeSet = new TreeSet<>();
+
+          treeSet.add(3);
+          treeSet.add(9);
+          treeSet.add(1);
+          treeSet.add(5);
+          treeSet.add(7);
+
+          // 정렬된 Integer 하나씩 꺼내오기
+          for (int i : treeSet) System.out.print(i+" ");
+          System.out.println();
+
+          // 특정 Integer 객체 가져오기
+          System.out.println("가장 낮은 수 : "+ treeSet.first());
+          System.out.println("가장 높은 수 : "+ treeSet.last());
+          System.out.println("6 아래 수 : "+ treeSet.lower(6));
+          System.out.println("6 위의 수 : "+ treeSet.higher(6));
+          System.out.println("5이거나 그 아래 수 : "+ treeSet.floor(5));
+          System.out.println("6이거나 그 위의 수 : "+ treeSet.ceiling(6));
+
+          //내림차순으로 정렬하기
+          NavigableSet<Integer> decendingSet = treeSet.descendingSet();
+          for (int i : decendingSet) System.out.print(i+" ");
+          System.out.println();
+
+          //범위 검색 (5>=)
+          NavigableSet<Integer> rangeSet = treeSet.tailSet(5,true);
+          for (int i : rangeSet) System.out.print(i+" ");
+          System.out.println();
+
+          //범위 검색 (3< , <=7)
+          rangeSet = treeSet.subSet(3,false,7,true);
+          for (int i : rangeSet) System.out.print(i+" ");
+          System.out.println();
+      }
+  }
+  ``` 
+
+### TreeMap
+- 이진 트리를 기반으로 한 Map Collection
+- TreeSet과의 차이점은 키와 값이 저장된 `Entry를 저장`
+- 키를 기준으로 정렬
+- 생성 방법
+  ```java
+  TreeMap<K,V> treeMap = new TreeMap<K,V>();
+  TreeMap<K,V> treeMap = new TreeMap<>();
+  ```
+- 메소드
+  - Map.Entry<K,V> firstEntry() : 제일낮은 Entry 리턴
+  - Map.Entry<K,V> lastEntry() : 제일높은 Entry 리턴
+  - Map.Entry<K,V> lowerEntry(K key) : key보다 바로 아래 Entry 리턴
+  - Map.Entry<K,V> higherEntry(K key) : key보다 바로 위 Entry 리턴
+  - Map.Entry<K,V> floorEntry(K key) : key와 동등한 Entry 리턴, 없다면 바로 아래 리턴
+  - Map.Entry<K,V> ceilingEntry(K key) : key와 동등한 Entry 리턴, 없다면 바로 위 리턴
+  - Map.Entry<K,V> pollFirstEntry() : 제일 낮은 Entry 리턴하고 삭제
+  - Map.Entry<K,V> pollLastEntry() : 제일 높은 Entry 리턴하고 삭제
+  - NavigableSet<K> descendingKeySet() : 내림차순으로 정렬된 키의 NavigableSet 리턴
+  - NavigableMap<K,V> descendingMap() : 내림차순으로 정렬된 NavigableMap 리턴
+  - NavigableMap<K,V> headMap(K key,boolean i) : key보다 낮은 Entry들 리턴, i가 true면 key포함
+  - NavigableMap<K,V> tailMap(K key,boolean i) : key보다 높은 Entry들 리턴, i가 true면 key포함
+  - NavigableMap<K,V> subMap(K k1,boolean i1, K2, boolean i2) : k1보다 높고 k2보다 낮은 Entry리턴, i1와 i2에 따라 k1,k2 포함 여부 결정
+- Code Example
+  ```java
+  import java.util.*;
+
+  public class TreeMapExample {
+      public static void main(String[] args) {
+          TreeMap<String,Integer> treeMap = new TreeMap<>();
+
+          treeMap.put("apple",10);
+          treeMap.put("cherry",20);
+          treeMap.put("banana",30);
+
+          //정렬된 엔트리 가져오기
+          Set<Map.Entry<String,Integer>> entrySet = treeMap.entrySet();
+          for (Map.Entry<String,Integer> entry : entrySet) System.out.println(entry.getKey() + " : " + entry.getValue());
+          System.out.println();
+
+          //특정 키에 대한 값 가져오기
+          Map.Entry<String,Integer> entry = null;
+          entry = treeMap.firstEntry();
+          System.out.println("제일 앞 단어 : "+ entry.getKey());
+          entry = treeMap.lastEntry();
+          System.out.println("제일 뒤 단어 : "+ entry.getKey());
+          entry = treeMap.floorEntry("car");
+          System.out.println("car와 같은 혹은 앞 단어 : " + entry.getKey());
+          System.out.println();
+
+          //내림차순으로 정렬하기
+          NavigableMap<String,Integer> descendingMap = treeMap.descendingMap();
+          Set<Map.Entry<String,Integer>> descendingEntrySet = descendingMap.entrySet();
+          for (Map.Entry<String,Integer> e : descendingEntrySet) System.out.println(e.getKey() + " : " + e.getValue());
+          System.out.println();
+
+          //범위 검색
+          System.out.println("[b~d 사이의 단어 검색]");
+          NavigableMap<String,Integer> rangeMap = treeMap.subMap("b",true,"d",false);
+          for (Map.Entry<String,Integer> e : rangeMap.entrySet()) System.out.println(e.getKey() + " : " + e.getValue());
+          System.out.println();
+
+
+      }
+  }
+  ```
+
+### `Comparable과 Comparator`
+- TreeSet와 TreeMap에 저장되는 키는 Comparable인터페이스를 구현해야 저장과 동시에 오름차순으로 정렬될 수 있다.
+- Integer, Double, String 타입의 객체는 모두 Comparable이 구현되어 있다.
+- 그 외의 객체에는 Comparable 인터페이스를 구현해주어야 TreeSet과 TreeMap이 사용 가능
+
+### Comparable
+- Comparable 인터페이스에는 compareTo() 메소드가 정의 되어 있다.
+- 따라서 사용자 정의 클래스에서 이 메소드를 Override하여 비교 결과를 정수 값으로 리턴해야 한다.
+  - int compareTo(T o)
+  - 주어진 객체와 같으면 0 리턴
+  - 주어진 객체보다 적응면 음수를 리턴
+  - 주어진 객체보다 적응면 양수를 리턴
+- Code Example
+  ```java
+  import java.util.TreeSet;
+
+  public class ComparableExample {
+      public static void main(String[] args) {
+          TreeSet<Person> treeSet = new TreeSet<>();
+
+          treeSet.add(new Person("ds",25));
+          treeSet.add(new Person("sh",26));
+          treeSet.add(new Person("dm",23));
+
+          for (Person p : treeSet) System.out.println(p.name+" : "+p.age);
+      }
+  }
+
+  class Person implements Comparable<Person>{
+      String name;
+      int age;
+      public Person(String name, int age){
+          this.name = name;
+          this.age = age;
+      }
+      @Override
+      public int compareTo(Person o){
+          if(age < o.age) return -1;
+          else if (age == o.age) return 0;
+          else return 1;
+      }
+  }
+  ```
+
+### Comparator
+- 비교 기능이 없는 Comparable 비구현 객체를 저장하고 싶을 때 사용
+- TreeSet과 TreeMap을 생성할 때 Comparator를 다음과 같이 제공하면된다.
+  ```java
+  TreeSet<E> treeSet = new TreeSet<E>( new ComparatorImpl() );
+  TreeMap<K,V> treeMap = new TreeMap<K,V>( new ComparatorImpl() );
+  ```
+- Comparator 인터페이스를 구현한 비교자 객체를 선언하면 됨
+- compare() 메소드를 Override해야한다.
+  - int compare(T o1, T o2)
+  - If o1 = o2, return 0
+  - If o1 < o2, return 음수
+  - If o1 > o2, return 양수
+- Code Example : comparable를 구현하지 않은 Fruit객체를 TreeSet에 저장하는 예
+  ```java
+  import java.util.Comparator;
+  import java.util.TreeSet;
+
+  public class ComparatorExample {
+      public static void main(String[] args) {
+          TreeSet<Fruit> treeSet = new TreeSet<>(new FruitComparator());
+
+          treeSet.add(new Fruit("포도",3000));
+          treeSet.add(new Fruit("수박",10000));
+          treeSet.add(new Fruit("딸기",6000));
+
+          for (Fruit fruit : treeSet) System.out.println(fruit.name+" : "+fruit.price);
+      }
+  }
+
+  class Fruit{
+      String name;
+      int price;
+      public Fruit(String name, int price){
+          this.name = name;
+          this.price = price;
+      }
+  }
+
+  class FruitComparator implements Comparator<Fruit>{
+      @Override
+      public int compare(Fruit o1, Fruit o2){
+          if(o1.price < o2.price) return -1;
+          else if (o1.price==o2.price) return 0;
+          else return 1;
+      }
+  }
+  ```
 
