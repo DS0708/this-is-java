@@ -593,3 +593,82 @@ Map<String,Integer> map = new Hashtable<>();
   }
   ```
 
+
+## 15.6 LIFO 와 FIFO 컬렉션 `(Stack, Queue)`
+- LIFO : Last In First Out
+- FIFO : First In First Out
+- 컬렉션 프레임워크는 LIFO 자료구조를 제공하는 `Stack 클래스`와
+- FIFO 자료구조를 제공하는 `Queue의 인터페이스`를 제공한다.
+
+### `Stack` Class
+- LIFO
+- 선언방법
+  ```java
+  Stack<E> stack = new Stack<E>();
+  Stack<E> stack = new Stack<>();
+  ```
+- Method
+  - E push(E item) : item을 스택에 push
+  - E pop() : 스택의 맨 위의 객체를 빼낸다.
+- Code Example
+  ```java 
+  import java.util.Stack;
+
+  public class StackExample {
+      public static void main(String[] args) {
+          Stack<Integer> stack = new Stack<>();
+
+          stack.push(1);
+          stack.push(2);
+          stack.push(3);
+
+          while(!stack.isEmpty()){
+              System.out.println(stack.pop());
+          }
+      }
+  }
+  ```
+  ```
+  실행결과 :
+  3
+  2
+  1
+  ```
+
+### `Queue` Interface
+- FIFO
+- 선언방법
+  ```java
+  Queue<E> queue = new LinkedList<E>();
+  Queue<E> queue = new LinkedList<>();
+  ```
+  > Queue 인터페이스를 구현한 대표적인 클래스는 LinkedList이다. 그래서 LinkedList객체를  Queue 인터페이스 변수에 대입.
+- Method
+  - boolean offer(E e) : 주어진 객체를 큐에 삽입
+  - E poll() : 큐에서 객체를 빼낸다.
+- Code Example
+  ```java
+  import java.util.LinkedList;
+  import java.util.Queue;
+
+  public class QueueExample {
+      public static void main(String[] args) {
+          Queue<Integer> queue = new LinkedList<>();
+
+          queue.offer(1);
+          queue.offer(2);
+          queue.offer(3);
+
+          while(!queue.isEmpty()){
+              System.out.println(queue.poll());
+          }
+
+      }
+  }
+  ```
+  ```
+  실행결과 :
+  1
+  2
+  3
+  ```
