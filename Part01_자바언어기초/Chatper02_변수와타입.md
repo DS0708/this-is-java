@@ -128,3 +128,18 @@ double y = 0.12E-2  //0.12 * 10^-2 = 0.0012
 - double 타입이 float타입 보다 약 2배의 유효 자릿수를 가진다고 보면 됨
 
 ## `2.5 논리 타입`
+- `참과 거짓을 의미하는 논리 리터럴은 true와 false이다.`
+  ```java
+  boolean stop = true;
+  boolean stop = false;
+  ```
+- boolean 타입 변수는 주로 두 가지 상태값을 저장할 필요가 있을 경우 사용되며
+- 상태값에 따라 조건문과 제어문의 실행 흐름을 변경ㅇ하는데 사용
+- 연산식 중에서 비교 및 논리 연산의 산출값은 true or false이므로 boolean 타입 변수에 다음과 같이 대입 가능
+  ```java
+  int x = 10;
+  boolean result = (x==20);
+  result = (x != 20);
+  result = (x > 20) ;
+  result = ( 0 < x && x < 20>);
+  ```
