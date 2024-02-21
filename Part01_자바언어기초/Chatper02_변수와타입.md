@@ -173,3 +173,28 @@ double y = 0.12E-2  //0.12 * 10^-2 = 0.0012
   ```
 
 ## `2.7 자동 타입 변환`
+- 자동 타입 변환은 값의 허용 범위가 작은 타입이 허용 범위가 큰 타입으로 대입될 때 발생한다.
+- 기본 타입의 허용 범위 순
+  ```
+  byte < short, char < int < long < float < double
+  ```
+  ```java
+  byte byteValue = 10;
+  int intValue = byteValue //자동 타입 변환됨
+  ```
+- 정수 타입이 실수 타입으로 대입될 경우에는 무조건 자동 타입 변환이 된다. 실수 타입은 정수 타입보다 허용 범위가 더 크기 때문
+  ```java
+  long longValue = 5000000000L;
+  float floatValue = longValue;   //5.0E9f로 저장됨
+  double doubleValue = longValue; //5.0E9로 저장됨
+  ```
+- char 타입의 경우 int 타입으로 자동 변환되면 유니코드 값이 int 타입에 대입된다.
+  ```java
+  char charValue = 'A';
+  int intValue = charValue;   //65가 저장됨
+  ```
+- byte가 char에 대입되는 것은 안된다. 왜냐하면 char 타입의 허용 범위는 음수를 포함하지 않기 때문이다.
+  ```java
+  byte byteValue = 65;
+  char charValue = byteValue; //컴파일 에러
+  ```
