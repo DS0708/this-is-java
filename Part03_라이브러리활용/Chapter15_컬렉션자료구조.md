@@ -518,8 +518,8 @@ Map<String,Integer> map = new Hashtable<>();
 - 따라서 사용자 정의 클래스에서 이 메소드를 Override하여 비교 결과를 정수 값으로 리턴해야 한다.
   - int compareTo(T o)
   - 주어진 객체와 같으면 0 리턴
-  - 주어진 객체보다 적응면 음수를 리턴
-  - 주어진 객체보다 적응면 양수를 리턴
+  - 주어진 객체보다 작으면 -1 리턴
+  - 주어진 객체보다 크면 +1 리턴
 - Code Example
   ```java
   import java.util.TreeSet;
@@ -556,6 +556,28 @@ Map<String,Integer> map = new Hashtable<>();
   dm : 23
   ds : 25
   ```
+- 값이 3개일때
+  ```java
+  class Node implements Comparable<Node>{
+    int[] containers = new int[3]; // A, B, C를 배열로 처리
+    public Node(int A,int B,int C){
+      this.containers[0] = A;
+      this.containers[1] = B;
+      this.containers[2] = C;
+    }
+
+    @Override
+    public int compareTo(Node o) {  //1, 0 ,-1 값이 모두 존재해야 정상적으로 TreeSet이 동작한다.
+      if (this.containers[0] != o.containers[0])
+        return Integer.compare(this.containers[0], o.containers[0]);
+      else if (this.containers[1] != o.containers[1])
+        return Integer.compare(this.containers[1], o.containers[1]);
+      else
+        return Integer.compare(this.containers[2], o.containers[2]);
+    }
+  }
+  ``` 
+  > Integer.compare는 첫번째가 두번째 인자보다 작으면 -1, 같으면 0 , 크면 +1 을 return한다.
 
 ### Comparator
 - 비교 기능이 없는 Comparable 비구현 객체를 저장하고 싶을 때 사용
