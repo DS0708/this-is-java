@@ -529,7 +529,7 @@ Map<String,Integer> map = new Hashtable<>();
           TreeSet<Person> treeSet = new TreeSet<>();
 
           treeSet.add(new Person("ds",25));
-          treeSet.add(new Person("sh",26));
+          treeSet.add(new Person("sh",25));
           treeSet.add(new Person("dm",23));
 
           for (Person p : treeSet) System.out.println(p.name+" : "+p.age);
@@ -550,6 +550,11 @@ Map<String,Integer> map = new Hashtable<>();
           else return 1;
       }
   }
+  ```
+  - 결과
+  ```
+  dm : 23
+  ds : 25
   ```
 
 ### Comparator
