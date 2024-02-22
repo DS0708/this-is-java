@@ -242,4 +242,116 @@ int intValue = (int) doubleValue; //정수 부분인 3 만 저장
 - 따라서 실수 타입은 정수 타입으로 항상 캐스팅해서 강제 변환시켜야 한다.
 - 이때 소수점 이하 부분은 버려지고 정수 부분만 저장된다.
 
+
 ## `2.9 연산식에서 자동 타입 변환`
+- 자바는 실행 성능을 향상시키기 위해 컴파일 단계에서 연산을 수행
+  ```java
+  byte result = 10 + 20     //컴파일: byte result = 30
+  ```
+  - 자바 컴파일러는 컴파일 단계에서 10 + 20을 미리 연산해서 30으로 만들고 result변수에 30을 저장
+  - 따라서 실행 시 덧셈 연산이 없으므로 실행 성능이 좋아진다.
+  - 하지만 정수 리터럴이 아니라 변수가 피연산자로 사용되면 실행 시 연산을 수행한다.
+
+### 정수 타입 변수의 산술 연산식
+- 정수 타입 변수가 산술 연산식에서 피연산자로 사용되면 int 타입보다 작은 byte, short 타입의 변수는 int타입으로 자동 타입 변환되어 연산을 수행한다.
+  ```java
+  byte x = 10;
+  byte y = 20;
+  byte result = x + y; //Compile Error
+  int result = x + y;
+  ```
+  > 이처럼 byte 변수 x,y가 피연산자로 사용되면 변수값은 int 타입으로 변환되어 연산되며 결과도 int타입으로 생성된다. 따라서 특별한 이유가 없다면 int타입으로 변수를 선언하는 것이 타입 변환이 발생하지 않기 때문에 성능이 좋음
+- int 타입보다 허용 범위가 더 큰 long 타입이 피연산자로 사용되면 다른 피연산자는 모두 long타입으로 변환되어 연산 되므로 결과 타입도 long이다.
+  ```java
+  byte v1 = 1;
+  int v2 = 2;
+  long v3 = 3;
+  long result = v1 + v2 + v3;
+  int result = v1 + v2 + v3;  //Compile Error
+  ```
+  > 자바에서는 이항 연산을 실행할 때 같은 타입으로 변환 후 연산한다. 따라서 v1,v2,v3는 long타입으로 자동 타입 변환되어 연산됨
+
+### 실수 타입 변수의 산술 연산식
+- 동일한 실수 타입이라면 해당 타입으로 연산된다.
+  ```java
+  float result = 1.2f + 3.4f; //Compile : float result = 4.6f;
+  ```
+- 하지만 피연산자 중 하나가 double 타입이면 다른 피연산자도 double타입으로 변환되어 연산되고, 결과 또한 double
+  ```java
+  double result = 1.2f + 3.4;   //Compile : double result = 4.6;
+  ```
+- int 타입과 double 타입을 연산하는 경우에도 int 타입 피연산자가 double 타입으로 자동 변환되고 연산이 수행된다.
+  ```java
+  int intValue = 10;
+  double doubleValue = 5.5;
+  double result = intValue + doubleValue;   //10.0 + 5.5
+  ```
+- 만약 int 타입으로 연산을 해야 한다면 캐스팅하면 됨
+  ```java
+  int intValue = 10;
+  double doubleValue = 5.5;
+  int result = intValue + (int)doubleValue; //10 + 5
+  ```
+
+### 정수 타입 실수 타입 산술 연산식 주의 할 것
+```java
+int x = 1;
+int y = 2;
+double resuslt = x / y;
+System.out.println(result);   //0.0
+```
+- 정수 타입 피연산자들의 연산 결과는 항상 정수 이기 때문에 0이 먼저 계산된 후에 double로 바뀌어 0.0이 출력됨
+- 해결방법
+  1. 둘 다 double로 타입 변환
+  ```java
+  int x = 1;
+  int y = 2;
+  double resuslt = (double)x / (double)y;
+  System.out.println(result);   //0.5
+  ```
+  2. x만 double로 타입 변환
+  ```java
+  int x = 1;
+  int y = 2;
+  double resuslt = (double)x / y;
+  System.out.println(result);   //0.5
+  ```
+  3. y만 double로 타입 변환
+  ```java
+  int x = 1;
+  int y = 2;
+  double resuslt = x / (double)y;
+  System.out.println(result);   //0.5
+  ```
+  > 2,3 의 경우 x,y연산 시에 자동으로 x or y 가 double로 타입 변환되어 연산된다.
+- 주의할 Code
+  ```java
+  int x = 1;
+  int y = 2;
+  double resuslt = (double)(x /y);
+  System.out.println(result);   //0.0
+  ```
+  > x,y가 int로 연산되어 결과가 0 이 나온 후 double로 변환되기 때문에 결과 값은 0.0
+
+### 문자열과 숫자 더하기
+- 자바에서 '+'연산자는 두 가지 기능을 가지고 있다.
+  1. 피연산자가 모두 숫자일 경우 덧셈 연산 수행
+  2. 피연산자 중 하나가 문자일 경우 나머지 피연산자도 문자열로 자동 변환되어 문자열 결합 연산 수행
+```java
+int value = 3 + 7;  //int value = 10;
+String str1 = "3" + 7 // String str = "37";
+String str2 = 3 + "7" // String str = "37";
+```
+- 연산식에서 '+' 연산자가 연이어 나오면 앞에서부터 순차적으로 덧셈 연산을 수행
+- 먼저 수행된 연산이 덧셈이라면 덧셈 결과를 가지고 그 다음 '+'연산을 수행한다
+- 만약 먼저 수행된 연산이 문자열 결합 연산이라면 이후 모든 '+'연산은 결합 연산이 된다.
+```java
+int value = 1 + 2 + 3; //int value = 6;
+String str1 = 1 + 2 + "3";  // String str = "33";
+String str2 = 1 + "2" + 3;  // String str = "123";
+String str3 = "1" + 2 + 3;  // String str = "123";
+```
+- 앞에서 순차적으로 + 연산을 수행하지 않고 특정 부분을 우선 연산하고 싶으면 해당 부분을 괄호()로 감싸면 된다.
+```java
+String str = "1" + (2+3); // String str = "15";
+```
