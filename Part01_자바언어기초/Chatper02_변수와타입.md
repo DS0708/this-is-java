@@ -464,4 +464,37 @@ public static void main(String[] args) {
 |문자열|%s<br>%6s<br>%-6s|abc<br>_ _ _ abc<br>abc _ _ _|
 |특수 문자|\t<br>\n<br>%%|<br><br>%|
 
+
 ## `2.13 키보드 입력 데이터를 변수에 저장`
+- 키보드로부터 입력된 데이터를 읽는 방법은 여러가지 이지만 여기서는 Scanner을 소개하려고 함
+  ```java
+  Scanner scanner = new Scanner(System.in);
+  ```
+- java.util의 클래스이다.
+- scanner.nextLine()을 통해 키보드로 입력된 내용을 문자열로 읽고 String변수에 저장 가능
+- 이때 nextLine()은 엔터 키가 입력되었을때 까지를 읽는다.
+- Code Example
+  ```java
+  public static void main(String[] args) {
+      Scanner scanner = new Scanner(System.in);
+      while(true){
+        System.out.print("입력 문자열:");
+        String data = scanner.nextLine();
+        if(data.equals("q")) break;
+        System.out.println("출력 문자열:"+data);
+        System.out.println();
+      }
+      System.out.println("종료");
+    }
+  ```
+  > 결과
+  ```
+  입력 문자열:Hi
+  출력 문자열:Hi
+
+  입력 문자열:동성
+  출력 문자열:동성
+
+  입력 문자열:q
+  종료
+  ```
