@@ -10,6 +10,10 @@
 - [2.7 자동 타입 변환](#27-자동-타입-변환)
 - [2.8 강제 타입 변환](#28-강제-타입-변환)
 - [2.9 연산식에서 자동 타입 변환](#29-연산식에서-자동-타입-변환)
+- [2.10 문자열을 기본 타입으로 변환](#210-문자열을-기본-타입으로-변환)
+- [2.11 변수 사용 범위](#211-변수-사용-범위)
+- [2.12 콘솔로 변수값 출력](#212-콘솔로-변수값-출력)
+- [2.13 키보드 입력 데이터를 변수에 저장](#213-키보드-입력-데이터를-변수에-저장)
 
 ## `2.1 변수 선언`
 - 변수 : 하나의 값을 저장할 수 있는 메모리 번지에 붙여진 이름
@@ -355,3 +359,50 @@ String str3 = "1" + 2 + 3;  // String str = "123";
 ```java
 String str = "1" + (2+3); // String str = "15";
 ```
+
+
+## `2.10 문자열을 기본 타입으로 변환`
+- String을 프로그램에서 숫자 타입으로 변환하고 싶을 때
+- 예를들어 "12"와 "3.4"를 정수 및 실수 타입으로 변환하고 싶을때
+- String -> 기본타입 : 기본타입.parse기본타입(String)
+- 기본 타입 -> String : String.valueOf(기본타입)
+- Code Example
+  ```java
+  public class PrimitiveAndStringConversionExample {
+    public static void main(String[] args) {
+      int value1 = Integer.parseInt("10");
+      double value2 = Double.parseDouble("3.14");
+      boolean value3 = Boolean.parseBoolean("true");
+
+      System.out.println("value1: "+value1);
+      System.out.println("value2: "+value2);
+      System.out.println("value3: "+value3);
+
+      String str1 = String.valueOf(10);
+      String str2 = String.valueOf(3.14);
+      String str3 = String.valueOf(true);
+
+      System.out.println("str1: "+str1);
+      System.out.println("str2: "+str2);
+      System.out.println("str3: "+str3);
+    }
+  }
+  ```
+  > 결과
+  ```
+  value1: 10
+  value2: 3.14
+  value3: true
+  str1: 10
+  str2: 3.14
+  str3: true
+  ```
+
+
+## `2.11 변수 사용 범위`
+
+
+## `2.12 콘솔로 변수값 출력`
+
+
+## `2.13 키보드 입력 데이터를 변수에 저장`
