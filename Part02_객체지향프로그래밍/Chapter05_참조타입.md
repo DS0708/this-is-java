@@ -26,10 +26,11 @@ int age = 25;
 double price = 100.5;
 
 // 참조 타입 변수
-String name = "김자바";
+String name = "신용권";
 String hobby = "독서";
 ```
-<img src="../image/referenceType.png" width="400" height="400"/>
+
+<img src="../image/reType.png" width="400" height="400"/>
 
 - 변수들은 모두 Stack이라는 메모리 영역에 생성된다.
 - 기본 타입 변수인 age와 price는 직접 값을 저장하고 있다.
