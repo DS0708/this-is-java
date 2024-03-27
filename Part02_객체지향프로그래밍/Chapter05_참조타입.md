@@ -93,7 +93,7 @@ true
 - 참조 타입 변수는 아직 번지를 저장하고 있지 않다는 뜻으로 null 값을 가질 수 있다. 
 - null도 초기값으로 사용될 수 있기 때문에 null로 초기화된 참조 타입 변수는 스택 영역에 생성된다.
 
-<img src="./image/nullStack.jpeg" width="400" height="300"/>
+<img src="./image/nullStack.jpg" width="400" height="300"/>
 
 - 참조 타입 변수가 null 값을 가지는지 확인하기위해 ==, != 연산도 수행할 수 있다.
 ```java
@@ -112,7 +112,7 @@ System.out.println(str.length()); // NullPointerException
 - 경우에 따라서는 참조 타입 변수에 일부러 null을 대입하기도 한다. 프로그램에서 객체를 사용하려면 해당 객체를 참조하는 변수를
 이용해야 하는데, 변수에 null을 대입하면 번지를 읽게 되므로 더 이상 객체를 사용할 수 없게 된다.
 
-<img src="./image/garbage.jpeg" width="400" height="300"/>
+<img src="./image/garbage.jpg" width="400" height="300"/>
 
 > 어떤 변수에서도 객체를 참조하지 않으면 해당 객체는 힙 메모리에는 있지만, 위치 정보를 모르기 때문에 사용할 수 없게된다. 자바는 이러한 객체를 Garbage Collector를 실행시켜 자동으로 제거한다. <br>
 > 또한 자바에서 코드를 이용해 객체를 직접 제거하는 방법을 제공하지 않기 때문에 객체를 제거하는 유일한 방법은 객체의 모든 참조를 없애는 것 뿐이다. 
