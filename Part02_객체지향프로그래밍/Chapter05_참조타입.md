@@ -1,4 +1,4 @@
-# 이것이 자바다 - Part05 - Chapter05 참조 타입
+# 이것이 자바다 - Part02 - Chapter05 참조 타입
 
 ## 목차
 - [5.1 데이터 타입 분류](#51-데이터-타입-분류)
@@ -93,7 +93,7 @@ true
 - 참조 타입 변수는 아직 번지를 저장하고 있지 않다는 뜻으로 null 값을 가질 수 있다. 
 - null도 초기값으로 사용될 수 있기 때문에 null로 초기화된 참조 타입 변수는 스택 영역에 생성된다.
 
-<img src="./image/nullStack.png" width="400" height="300"/>
+<img src="./image/.png" width="400" height="300"/>
 
 - 참조 타입 변수가 null 값을 가지는지 확인하기위해 ==, != 연산도 수행할 수 있다.
 ```java
@@ -130,3 +130,5 @@ String kind2 = kind2;
 kind1 = null;
 ```
 > 해당 코드에서 kind1에 null을 대입하였지만  "car" 객체를 아직 kind2가 참조하고 있으므로 "car" 객체는 쓰레기 객체가 되지 않는다.
+
+
