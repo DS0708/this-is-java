@@ -4,6 +4,7 @@
 - [5.1 데이터 타입 분류](#51-데이터-타입-분류)
 - [5.2 메모리 사용 영역](#52-메모리-사용-영역)
 - [5.3 참조 타입 변수의 ==, != 연산](#53-참조-타입-변수의---연산)
+- [5.4 null과 NullPointerException](#54-null과-nullpointerexception)
 
 ## `5.1 데이터 타입 분류`
 자바의 데이터 타입은 크게 `기본 타입(primitive type)과 참조 타입(reference type)`으로 분류된다.
@@ -87,5 +88,45 @@ false
 true
 ```
 
+## `5.4 null과 NullPointerException`
 
+- 참조 타입 변수는 아직 번지를 저장하고 있지 않다는 뜻으로 null 값을 가질 수 있다. 
+- null도 초기값으로 사용될 수 있기 때문에 null로 초기화된 참조 타입 변수는 스택 영역에 생성된다.
 
+<img src="./image/nullStack.png" width="400" height="300"/>
+
+- 참조 타입 변수가 null 값을 가지는지 확인하기위해 ==, != 연산도 수행할 수 있다.
+```java
+String ref = null;
+System.out.println(ref == null); // true
+```
+
+- 자바는 프로그램 도중에 발생하는 오류를 Exception라고 부르며 참조 변수가 null인 상태에서 그 객체의 데이터나
+메소드를 사용하려 할 때 `NullPointerException`이 발생한다.
+```java
+String str = null;
+System.out.println(str.length()); // NullPointerException
+```
+> 앞으로 NullPointerException이 발생하면 예외가 발생된 곳에서 null인 상태의 참조 변수가 사용되고 있음을 알아야 한다.
+
+- 경우에 따라서는 참조 타입 변수에 일부러 null을 대입하기도 한다. 프로그램에서 객체를 사용하려면 해당 객체를 참조하는 변수를
+이용해야 하는데, 변수에 null을 대입하면 번지를 읽게 되므로 더 이상 객체를 사용할 수 없게 된다.
+
+<img src="./image/garbage.png" width="400" height="300"/>
+
+> 어떤 변수에서도 객체를 참조하지 않으면 해당 객체는 힙 메모리에는 있지만, 위치 정보를 모르기 때문에 사용할 수 없게된다. 자바는 이러한 객체를 Garbage Collector를 실행시켜 자동으로 제거한다. <br>
+> 또한 자바에서 코드를 이용해 객체를 직접 제거하는 방법을 제공하지 않기 때문에 객체를 제거하는 유일한 방법은 객체의 모든 참조를 없애는 것 뿐이다. 
+
+- 다음 코드에서 "trip"에 해당하는 String 객체는 쓰레기가 된다.
+```java
+String hobby = "trip";
+hobby = "game"
+```
+
+- null을 대입한다고 해서 쓰레기 객체가 되는 것은 아니다. 자신을 참조하는 변수가 없는 객체만이 쓰레기 객체가 될 수 있다.
+```java
+String kind1 = "car";
+String kind2 = kind2;
+kind1 = null;
+```
+> 해당 코드에서 kind1에 null을 대입하였지만  "car" 객체를 아직 kind2가 참조하고 있으므로 "car" 객체는 쓰레기 객체가 되지 않는다.
