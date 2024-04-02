@@ -316,3 +316,225 @@ Port 번호를 재사용할 수 있다.
   ```
 
 ### 입출력 스트림으로 데이터 주고 받기
+
+- 클라이언트가 연결 요청(connect())을 하고 서버가 연결 수락(accept())했다면, 다음 그림과 같이 양쪽의 Socket 객체로부터 각각 입력 스트림과 출력 스트림을 얻을 수 있다.
+<img src="./image/socketStream.png" width="700" height="300"/>
+
+- 다음은 Socket으로부터 InputStream과 OutputStream을 얻는 코드이다.
+  ```java
+  InputStream is = socket.getInputStream();
+  OutputStream os = socket.getOutputStream();
+  ```
+
+- 상대방에게 데이터를 보낼 때에는 보낼 데이터를 byte[] 배열로 생성하고, 이것을 매개값으로 해서 OutputStream의 write() 메소드를 호출하면 된다. 다음 코드는 문자열로부터 UTF-8로 인코딩한 바이트 배열을 얻어내고, write() 메소드로 전송한다.
+  ```java
+  String data = "보낼 데이터"
+  byte[] bytes = data.getBytes("UTF-8");
+  OutputStream os = socket.getOutputStream();
+  os.write(bytes);
+  os.flush();
+  ```
+
+- 문자열을 좀 더 간편하게 보내고 싶다면 보조 스트림인 DataOutputStream을 연결해서 사용하면된다.
+  ```java
+  String data = "보낼 데이터";
+  DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+  dos.writeUTF(data);
+  dos.flush();
+  ```
+
+- 데이터를 받기 위해서는 받은 데이터를 저장할 byte[]배열을 하나 생성하고, 이것을 매개값으로 해서 InputStream의 read() 메소드를 호출하면 된다. 
+- read() 메소드는 읽은 데이터를 byte[] 배열에 저장하고 읽은 바이트 수를 리턴한다.
+- 받는 데이터가 문자열이라면 다음과 같이 byte[] 배열을 UTF-8로 디코딩해서 문자열로 얻을 수 있다.
+  ```java
+  byte[] bytes = new byte[1024];
+  InputStream is = socket.getInputStream();
+  int num = is.read(bytes);
+  String data = new String(bytes, 0, num, "UTF-8");
+  ```
+
+- 문자열을 좀 더 간편하게 받고 싶다면 보조 스트림인 DataInputStream을 연결해서 사용하면 된다.
+- 단, 이 방법은 상대방이 DataOutputStream으로 문자열을 보낼 때만 가능하다.
+  ```java
+  DataInputStream dis = new DataInputStream(socket.getInputStream());
+  String data = dis.readUTF();
+  ```
+
+- 다음은 TCP 클라이언트가 보낸 메시지를 다시 돌려보내는 에코(메아리) TCP 서버를 구현한 예제이다.
+  - EchoServer
+  ```java
+  import java.io.*;
+  import java.net.InetSocketAddress;
+  import java.net.ServerSocket;
+  import java.net.Socket;
+  import java.util.Scanner;
+
+  public class EchoServer {
+    static ServerSocket serverSocket = null;
+    public static void main(String[] args) {
+      System.out.println("----------------------------------------------");
+      System.out.println("서버를 종료하려면 q 또는 Q를 입력하고 Enter 키를 입력하세요.");
+      System.out.println("----------------------------------------------");
+
+      //TCP 서버 시작
+      startServer();
+
+      //키보드 입력
+      Scanner scanner = new Scanner(System.in);
+      while(true){
+        String key = scanner.nextLine();
+        if(key.toLowerCase().equals("q")){
+          break;
+        }
+      }
+      scanner.close();
+
+      //TCP 서버 종료
+      stopServer();
+    }
+    public static void startServer(){
+      //작업 스레드 정의
+      Thread thread = new Thread(){
+        @Override
+        public void run() {
+          try{
+            //ServerSocket 생성 및 Port 바인딩
+            serverSocket = new ServerSocket(50001);
+            System.out.println("[서버] 시작됨");
+
+            //연결 수락 및 데이터 통신
+            while(true){
+              System.out.println("\n[서버] 연결 요청을 기다림\n");
+              //연결 수락
+              Socket socket = serverSocket.accept();
+
+              //연결된 클라이언트 정보 얻기
+              InetSocketAddress isa = (InetSocketAddress) socket.getRemoteSocketAddress();
+              System.out.println("[서버] "+isa.getHostName() + "의 연결 요청을 수락함");
+
+              //-----------------------------------------------------------------------------
+              //데이터 받기 - InputStream 사용
+  //            InputStream is = socket.getInputStream();
+  //            byte[] bytes = new byte[1024];
+  //            int readByteCount = is.read(bytes);
+  //            String message = new String(bytes, 0, readByteCount, "UTF-8");
+  //
+  //            //데이터 보내기
+  //            OutputStream os = socket.getOutputStream();
+  //            bytes = message.getBytes("UTF-8");
+  //            os.write(bytes);
+  //            os.flush();
+  //            System.out.println("[서버] 받은 데이터를 다시 보냄: " + message);
+              //-----------------------------------------------------------------------------
+              //데이터 받기 - DataInputStream 사용
+              DataInputStream dis = new DataInputStream(socket.getInputStream());
+              String message = dis.readUTF();
+
+              //데이터 보내기
+              DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+              dos.writeUTF(message);
+              dos.flush();
+              System.out.println("[서버] 받은 데이터를 다시 보냄: " + message);
+              //-----------------------------------------------------------------------------
+
+
+              //연결 끊기
+              socket.close();
+              System.out.println("[서버] " + isa.getHostName() + "의 연결을 끊음");
+            }
+
+          }catch (IOException e){
+            System.out.println("[서버] " + e.getMessage());
+          }
+        }
+      };
+      //스레드 시작
+      thread.run();
+    }
+    public static void stopServer(){
+      try{
+        //ServerSocket을 닫고 Port 언바인딩
+        serverSocket.close();
+        System.out.println("[서버] 종료됨");
+      }catch (IOException e1){}
+    }
+  }
+  ```
+
+  - EchoClient
+  ```java
+  import java.io.*;
+  import java.net.Socket;
+
+  public class EchoClient {
+    public static void main(String[] args) {
+      try{
+        //Socket 생성과 동시에 localhost의 50001 Port로 연결 요청
+        Socket socket = new Socket("localhost",50001);
+
+        System.out.println("[클라이언트] 연결 성공");
+
+        //-----------------------------------------------------------------------------
+        //데이터 보내기 - OutputStream 사용
+  //      String sendMessage = "나는 자바가 좋아~";
+  //      OutputStream os = socket.getOutputStream();
+  //      byte[] bytes = sendMessage.getBytes("UTF-8");
+  //      os.write(bytes);
+  //      os.flush();
+  //      System.out.println("[클라이언트] 데이터 보냄: " + sendMessage);
+  //
+  //      //데이터 받기
+  //      InputStream is = socket.getInputStream();
+  //      bytes = new byte[1024];
+  //      int readByteCount = is.read(bytes);
+  //      String receiveMessage = new String(bytes, 0, readByteCount, "UTF-8");
+  //      System.out.println("[클라이언트] 데이터 받음: " + receiveMessage);
+        //-----------------------------------------------------------------------------
+        //데이터 보내기 - DataOutputStream 사용
+        String sendMessage = "나는 자바가 좋아~";
+        DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+        dos.writeUTF(sendMessage);
+        dos.flush();
+        System.out.println("[클라이언트] 데이터 보냄: " + sendMessage);
+
+        //데이터 받기
+        DataInputStream dis = new DataInputStream(socket.getInputStream());
+        String receiveMessage = dis.readUTF();
+        System.out.println("[클라이언트] 데이터 받음: " + receiveMessage);
+        //-----------------------------------------------------------------------------
+
+        //Socket 닫기
+        socket.close();
+        System.out.println("[클라이언트] 연결 끊음");
+      }catch (Exception e){}
+    }
+  }
+  ```
+  - 구현 결과
+
+```
+결과 - EchoServer
+
+----------------------------------------------
+서버를 종료하려면 q 또는 Q를 입력하고 Enter 키를 입력하세요.
+----------------------------------------------
+[서버] 시작됨
+
+[서버] 연결 요청을 기다림
+
+[서버] localhost의 연결 요청을 수락함
+[서버] 받은 데이터를 다시 보냄: 나는 자바가 좋아~
+[서버] localhost의 연결을 끊음
+
+[서버] 연결 요청을 기다림
+```
+```
+결과 - EchoClient
+
+[클라이언트] 연결 성공
+[클라이언트] 데이터 보냄: 나는 자바가 좋아~
+[클라이언트] 데이터 받음: 나는 자바가 좋아~
+[클라이언트] 연결 끊음
+```
+
+
