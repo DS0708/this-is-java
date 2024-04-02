@@ -228,3 +228,91 @@ Port 번호를 재사용할 수 있다.
 
 
 ### TCP 클라이언트
+- 클라이언트가 서버에 연결 요청을 하려면 Socket 객체를 생성할 때 생성자 매개값으로 `서버 IP 주소와 Port번호를 제공`하면 된다. 로컬 컴퓨터에서 실행하는 경우 IP 주소 대신 localhost 사용 가능
+  ```java
+  Socket socket = new Socket("IP", 50001);
+  ```
+
+- IP 주소 대신 도메인 이름을 사용하는 것도 가능. 이때 DNS에서 IP주소를 검색할 수 있도록 `InetAddress를 제공`해야 한다.
+  ```java
+  Socket socket = new Socket(new InetAddress.getByName("domainName",50001));
+  ```
+
+- Socket 생성과 동시에 연결 요청을 하지 않고 다음과 같이 기본 생성자로 생성 후 connect() 메소드로 연결 요청을 할 수도 있다.
+  ```java
+  Socket socket = new Scoket();
+  socket.connect(new InetSocketAddress("domainName", 50001))
+  ```
+
+- 연결 요청 시 두가지 예외가 발생할 수 있으며 이 두 가지 예외를 모두 처리해야 한다.
+  - UnknownHostException : IP 주소가 잘못 표기 되었을 때 발생
+  - IOException : 제공된 IP와 Port번호로 연결할 수 없을 때 발생
+  ```java
+  try{
+    Socket socket = new Socket("IP", 50001);
+  }catch(UnknownHostException e){
+
+  }catch(IOException e){
+    
+  }
+  ```
+
+- 서버와 연결된 후에 클라이언트에서 연결을 끊고 싶다면 close() 메소드를 호출하면 된다.
+  ```java
+  socket.close();
+  ```
+
+- 다음은 이전 예제인 ServerExample에 연결 요청을 하는 TCP 클라이언트의 가장 기본적인 코드이다.
+  ```java
+  import java.io.IOException;
+  import java.net.Socket;
+  import java.net.UnknownHostException;
+
+  public class ClientExample {
+    public static void main(String[] args) {
+      try{
+        //Socket 생성과 동시에 localhost의 50001 Port로 연결 요청
+        Socket socket = new Socket("localhost",50001);
+
+        System.out.println("[클라이언트] 연결 성공");
+
+        //Socket 닫기
+        socket.close();
+        System.out.println("[클라이언트] 연결 끊음");
+      }catch (UnknownHostException e){
+        System.out.println("IP 표기 방법이 잘못되었을 경우");
+      }catch (IOException e){
+        System.out.println("해당 포트의 서버에 연결할 수 없는 경우");
+      }
+    }
+  }
+  ```
+  > ServerExample먼저 실행 후 ClientExample를 실행시키면 다음과 같은 결과가 출력된다.
+  ```
+  ServerExample 결과 
+
+  ----------------------------------------------
+  서버를 종료하려면 q 또는 Q를 입력하고 Enter 키를 입력하세요.
+  ----------------------------------------------
+  [서버] 시작됨
+
+  [서버] 연결 요청을 기다림
+
+  [서버] localhost의 연결 요청을 수락함
+  [서버] localhost의 연결을 끊음
+
+  [서버] 연결 요청을 기다림
+
+
+  q
+  [서버] 종료됨
+  [서버] Socket closed
+  ```
+  ```
+  ClientExample 결과
+
+  [클라이언트] 연결 성공
+  [클라이언트] 연결 끊음
+  ```
+
+### 입출력 스트림으로 데이터 주고 받기
