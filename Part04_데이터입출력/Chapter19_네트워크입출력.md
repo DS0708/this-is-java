@@ -2,6 +2,7 @@
 
 ## 목차
 - [19.1 네트워크 기초](#191-네트워크-기초)
+- [19.2 IP 주소 얻기](#192-ip-주소-얻기)
 
 ## `19.1 네트워크 기초`
 
@@ -50,3 +51,47 @@ www.naver.com : 222.122.295.5
 |Well Known Port Numbers|0~1023|국제인터넷주소관리기구(ICANN)가 특정<br>애플리케이션용으로 미리 예약한 Port|
 |Registered Port Numbers|1024~49151|회사에서 등록해서 사용할 수 있는 Port|
 |Dynamic Or Private Port Numbers|49152~65535|OS가 부여하는 동적 Port 또는<br>개인적인 목적으로 사용할 수 있는 Port|
+
+
+## `19.2 IP 주소 얻기`
+- 자바는 IP 주소를 java.net 패키지의 InetAddress로 표현한다.
+- InetAddress를 이용해 로컬 컴퓨터의 IP 주소를 얻을 수 있고, 도메인 이름으로 DNS에서 검색한 후 IP 주소를 가져올 수도 있다.
+- 로컬 컴퓨터와 Naver의 IP주소 출력하기
+
+  ```java
+  import java.net.InetAddress;
+
+  public class InetAddressExample {
+    public static void main(String[] args) {
+      try{
+        InetAddress local = InetAddress.getLocalHost();
+        System.out.println("내 컴퓨터 IP 주소 : " + local.getHostAddress());
+
+        InetAddress[] isArr = InetAddress.getAllByName("www.naver.com");
+        for(InetAddress remote : isArr){
+          System.out.println("www.naver.com IP 주소: " + remote.getHostAddress());
+        }
+      }catch(Exception e){
+        e.printStackTrace();
+      }
+    }
+  }
+  ```
+  ```
+  결과 
+
+  내 컴퓨터 IP 주소 : 127.0.0.1
+  www.naver.com IP 주소: 223.130.192.247
+  www.naver.com IP 주소: 223.130.192.248
+  www.naver.com IP 주소: 223.130.200.219
+  www.naver.com IP 주소: 223.130.200.236
+  ```
+- InetAddress의 getLocalHost() static method를 이용하여 로컬 컴퓨터의 InetAddress를 얻을 수 있다.
+- 또한 InetAddress의 getHostAddress() instance method를 이용하여 IP주소를 출력할 수 있다.
+- 만약 컴퓨터의 도메인 이름을 알고 있따면 다음 두 개의 메소드를 사용하여 InetAddress 객체를 얻을 수 있다.
+```java
+InetAddress ia = InetAddress.getByName("www.naver.com");
+InetAddress[] isArr = InetAddress.getAllByName("www.naver.com");
+```
+> getByName()은 하나의 InetAddress 객체를 가져오고 getAllByName()는 하나의 도메인 이름으로 여러 IP가 등록되어 있는 경우
+> 여러 개의 InetAddress 객체들을 가져온다. 여러 IP가 등록되어 있는 이유는 서버의 부하를 나누기 위해서이다.
